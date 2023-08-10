@@ -1,6 +1,7 @@
 package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.H2;
@@ -15,6 +16,8 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 
+import java.util.Collections;
+
 @PageTitle("list")
 @Route(value = "")
 public class ListView extends VerticalLayout { //垂直方向のレイアウト
@@ -23,6 +26,8 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
     Grid<Contact> grid = new Grid<>(Contact.class);
     // テキスト領域の準備
     TextField filterText = new TextField();
+    // フォーム用クラスのインスタンス
+    ContactForm form;
 
     public ListView(){
         // コンポーネント（1番大きい）の名前
@@ -31,8 +36,10 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         setSizeFull();
         // 表の内容の設定
         configureGrid();
+        //
+        configureForm();
         // コンポーネントの配置
-        add(getToolbar(), grid);
+        add(getToolbar(), getContent());
     }
 
     // 表コンポーネントの設定
@@ -49,6 +56,13 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         // カラム幅を自動設定
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
     }
+
+    private void configureForm() {
+        form = new ContactForm(Collections.emptyList(), Collections.emptyList());
+        form.setWidth("25em");
+    }
+
+
 
     // ツールバーの設定
     private HorizontalLayout getToolbar(){
@@ -69,6 +83,18 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         // コンポーネントの名前
         toolbar.addClassName("toolbar");
         return toolbar;
+    }
+
+    private Component getContent(){
+        // 横並びに表とフォームを配置
+        HorizontalLayout content = new HorizontalLayout(grid, form);
+        // 横並びのコンポーネント幅の割合を指定
+        // boot-strapのグリッドシステムみたいな感じ
+        content.setFlexGrow(2, grid);
+        content.setFlexGrow(1, form);
+        content.addClassNames("content");
+        content.setSizeFull();
+        return content;
     }
 
 //    public ListView() {
