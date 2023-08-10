@@ -1,6 +1,7 @@
 package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
+import com.example.application.data.service.CrmService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -18,8 +19,9 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 
 import java.util.Collections;
 
-@PageTitle("list")
+//@PageTitle("list")
 @Route(value = "")
+@PageTitle("Contacts | Vaadin CRM")
 public class ListView extends VerticalLayout { //垂直方向のレイアウト
 
     // 表領域の準備
@@ -28,8 +30,10 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
     TextField filterText = new TextField();
     // フォーム用クラスのインスタンス
     ContactForm form;
+    CrmService service;
 
-    public ListView(){
+    public ListView(CrmService service){
+        this.service = service;
         // コンポーネント（1番大きい）の名前
         addClassName("list-view");
         // 画面サイズに対して最大化
@@ -40,6 +44,7 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         configureForm();
         // コンポーネントの配置
         add(getToolbar(), getContent());
+        updateList();
     }
 
     // 表コンポーネントの設定
@@ -58,7 +63,7 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
     }
 
     private void configureForm() {
-        form = new ContactForm(Collections.emptyList(), Collections.emptyList());
+        form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
         form.setWidth("25em");
     }
 
@@ -74,6 +79,9 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         // Configure the search field to fire value-change events only when the user stops typing.
         // This way you avoid unnecessary database calls, but the listener is still fired without the user leaving the focus from the field.
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
+        // ここわからん
+        // フィルターの中身が変わるたびに呼び出し
+        filterText.addValueChangeListener(e -> updateList());
 
         // ボタンの配置
         Button addContactButton = new Button("Add contact");
@@ -95,6 +103,10 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         content.addClassNames("content");
         content.setSizeFull();
         return content;
+    }
+
+    private void updateList(){
+        grid.setItems(service.findAllContacts(filterText.getValue()));
     }
 
 //    public ListView() {
