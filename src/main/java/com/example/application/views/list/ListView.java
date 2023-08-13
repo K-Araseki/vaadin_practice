@@ -45,9 +45,10 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         // コンポーネントの配置
         add(getToolbar(), getContent());
         updateList();
+        closeEditor();
     }
 
-    // 表コンポーネントの設定
+    // 表コンポーネントの設定　configure...設定、構成
     private void configureGrid(){
         // コンポーネントの名前
         grid.addClassName("contact-grid");
@@ -60,6 +61,10 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
         // カラム幅を自動設定
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
+        // グリッドの単一行に対して、リスナーを追加する
+        // 選択された行に対する連絡先を表示する、ない場合はnullを返す　※詳しくはeditContactメソッド参照
+        grid.asSingleSelect().addValueChangeListener(event ->
+                editContact(event.getValue()));
     }
 
     private void configureForm() {
@@ -85,6 +90,8 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
 
         // ボタンの配置
         Button addContactButton = new Button("Add contact");
+        // ボタンに対してリスナーを追加し、クリックに対してddContact()を呼び出す
+        addContactButton.addClickListener(click -> addContact());
 
         // 横方向に配置
         var toolbar = new HorizontalLayout(filterText, addContactButton);
@@ -103,6 +110,32 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
         content.addClassNames("content");
         content.setSizeFull();
         return content;
+    }
+
+    public void editContact(Contact contact){
+        if (contact == null){
+            // 連絡先が存在しない場合はフォームを閉じる
+            closeEditor();
+        } else {
+            // フォームに連絡先を設定して表示する
+          form.setContact(contact);
+          form.setVisible(true);
+          addClassName("editing");
+        }
+    }
+    private void closeEditor(){
+        // フォームの連絡先をnullにして古い値をクリアする
+        form.setContact(null);
+        // フォームを非表示にする
+        form.setVisible(false);
+        // CSSクラスを除去する
+        removeClassName("editing");
+    }
+
+    private void addContact(){
+        // グリッドの選択を解除
+        grid.asSingleSelect().clear();
+        editContact(new Contact());
     }
 
     private void updateList(){
