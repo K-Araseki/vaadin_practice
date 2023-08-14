@@ -1,0 +1,7 @@
+/*クラス内で定義したクラス名に対して表示・非表示の制御をおこなう*/
+@media all and (max-width: 1100px) {
+    .list-view.editing .toolbar,
+    .list-view.editing .contact-grid {
+        display: none;
+    }
+}
