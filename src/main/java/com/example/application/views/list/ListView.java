@@ -70,8 +70,25 @@ public class ListView extends VerticalLayout { //垂直方向のレイアウト
     private void configureForm() {
         form = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
         form.setWidth("25em");
+        // saveボタンにリスナーを追加し、イベント時の処理を追加
+        form.addSaveListener(this::saveContact);
+        // deleteボタンにリスナーを追加し、イベント時の処理を追加
+        form.addDeleteListener(this::deleteContact);
+        // cancelボタンにリスナーを追加し、イベント時の処理を追加
+        form.addCloseListener(e -> closeEditor());
     }
 
+    private void saveContact(ContactForm.SaveEvent event) {
+        service.saveContact(event.getContact());
+        updateList();
+        closeEditor();
+    }
+
+    private void deleteContact(ContactForm.DeleteEvent event) {
+        service.deleteContact(event.getContact());
+        updateList();
+        closeEditor();
+    }
 
 
     // ツールバーの設定
