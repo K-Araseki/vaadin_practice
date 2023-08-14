@@ -2,6 +2,7 @@ package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
 import com.example.application.data.service.CrmService;
+import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -20,9 +21,9 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import java.util.Collections;
 
 //@PageTitle("list")
-@Route(value = "")
+@Route(value = "", layout = MainLayout.class)
 @PageTitle("Contacts | Vaadin CRM")
-public class ListView extends VerticalLayout { //垂直方向のレイアウト
+public class ListView extends VerticalLayout { // 垂直方向のレイアウト
 
     // 表領域の準備
     Grid<Contact> grid = new Grid<>(Contact.class);
